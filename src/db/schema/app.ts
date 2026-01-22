@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import {integer, pgTable, timestamp, varchar} from 'drizzle-orm/pg-core';
+import {serial, integer, pgTable, timestamp, varchar} from 'drizzle-orm/pg-core';
 
 const timeStamps ={
     createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -7,7 +7,7 @@ const timeStamps ={
 }
 
 export const departments = pgTable('departments', {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: serial('id').primaryKey(),
     code: varchar('code', {length: 50}).notNull().unique(),
     name: varchar('name', {length: 255}).notNull(),
     description: varchar('description', {length: 255}),
@@ -15,7 +15,7 @@ export const departments = pgTable('departments', {
 });
 
 export const subjects = pgTable('subjects', {
-    id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+    id: serial('id').primaryKey(),
     departmentId: integer('department_id').notNull().references(() => departments.id, {onDelete: 'restrict'}),
     name: varchar('name', {length: 255}).notNull(),
     code: varchar('code', {length: 50}).notNull().unique(),
