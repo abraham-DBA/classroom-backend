@@ -10,8 +10,10 @@ router.get("/", async (req, res) => {
     try{
         const { search, department, page = 1, limit = 10 } = req.query;
 
-        const currentPage = Math.max(1, +page);
-        const limitPerPage = Math.max(1, +limit);
+        const parsedPage = parseInt(String(page), 10);
+        const parsedLimit = parseInt(String(limit), 10);
+        const currentPage = Number.isNaN(parsedPage) ? 1 : Math.max(1, parsedPage);
+        const limitPerPage = Number.isNaN(parsedLimit) ? 10 : Math.max(1, Math.min(100, parsedLimit));
 
         const offset = (currentPage - 1) * limitPerPage;
 
@@ -42,7 +44,7 @@ router.get("/", async (req, res) => {
             .leftJoin(departments, eq(subjects.departmentId, departments.id))
             .where(whereClause)
 
-        const totalCount = countResult[0]?.count ?? 0;
+        const totalCount = Number(countResult[0]?.count) || 0;
 
         const subjectList = await db.select(
             {
